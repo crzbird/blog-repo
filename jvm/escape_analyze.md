@@ -5,7 +5,7 @@ github_url = "https://github.com/crzbird"
 head_img = ""
 created_at = 2021-02-12T21:35:15
 updated_at = 2021-02-12T21:35:15
-description = "主要介绍了 Client 类型以及 Do 和 Head 的使用。"
+description = ""
 tags = ["java","jvm"]
 +++
 # “逃逸分析”与“TLAB”
