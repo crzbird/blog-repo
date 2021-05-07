@@ -10,7 +10,13 @@ tags = ["java","jvm"]
 +++
 # JVM内存设置多大合适？
 ## 根据Java Performance里面的推荐公式来进行设置
-![img.png](img.png)
+|Space  |  Command Line Option  |  Occupancy Factor  |
+|:----------|:----------|:----------|
+| Java heap    | -Xms and -Xmx    | 3x to 4x old generation space occupancy after full garbage collection    |
+| Permanent Generation    | -XX:PermSize -XX:MaxPermSize    | 1.2x to 1.5x permanent generation space occupancy after full garbage collection    |
+| Young Generation    | -Xmn    | 1x to 1.5x old generation space occupancy after full garbage collection    |
+| Old Generation    |  Implied from overall Java heap size minus the young generation size    | 2x to 3x old generation space occupancy after full garbage collection    |
+
 具体来讲：
 Java整个堆大小设置，Xmx 和 Xms设置为老年代存活对象的3-4倍，即FullGC之后的老年代内存占用的3-4倍
 永久代 PermSize和MaxPermSize设置为老年代存活对象的1.2-1.5倍。
