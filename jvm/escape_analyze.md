@@ -47,10 +47,8 @@ User中的id则为标量，而User对象成为聚合量。如果user不会发生
 
 ![image-a3345306ca6540d896f40720abc30c64](https://user-images.githubusercontent.com/40804675/174811278-d8b20770-09ec-4a85-9deb-c5c02bba3528.png)
 耗时2ms
-
 ![image-b1b4a524cd684ac0a74c548e0a0cd151](https://user-images.githubusercontent.com/40804675/174811349-6861a91a-b4a6-44be-955b-63ef4c9b7e3e.png)
 User对象数量为：160871。
-
 2.关闭逃逸分析(-XX:-DoEscapeAnalysis)：
 ![image-cc0017641ee34d4e85a1362d5ba76289](https://user-images.githubusercontent.com/40804675/174811380-70e19968-6e5d-40a4-bed7-a88132eed8bb.png)
 耗时11ms
@@ -58,11 +56,9 @@ User对象数量为：160871。
 User对象数量为：100万。
 ### 逃逸分析总结：
 逃逸分析是否开启直接影响到应用性能，耗时和空间不在一个量级。非逃逸对象随方法出栈销毁，很大程度上减轻GC压力。
-
 ## TLAB（Thread Local Allocation Buffer）
 众所周知堆内存是线程共享的，多线程对共享资源操作为保证安全则必定需要同步操作（JVM采用CAS和重试来保证多线程对堆内存操作的安全）。而同步操作又必然有性能上损失，由此产生了TLAB线程本地分配缓冲区。每一个线程创建时会在堆上（EDEN区）申请小部分私有空间，默认为eden区的1%。TLAB中有三个指针start（起始）、top（已耗）、end（终止），当top与end碰撞则会触发refill；refill：如end-top小于等于A.size(对象大小)，1.将原来TLAB剩余空间以“filler object”填充（int[]），保证线性。2.在eden区再申请一段TLAB用来存放A对象，如果申请失败则会触发YGC。3.如果对象大于阈值则直接进入老年代：
 ![image-6957397882e34bcd84d9c41bb21d4f6c](https://user-images.githubusercontent.com/40804675/174811488-bdfa0d0d-51d4-4f59-8055-057aabaa0216.png)
-
 众所周知堆内存是线程共享的，多线程对共享资源操作为保证安全则必定需要同步操作（JVM采用CAS和重试来保证多线程对堆内存操作的安全）。而同步操作又必然有性能上损失，由此产生了TLAB线程本地分配缓冲区。每一个线程创建时会在堆上（EDEN区）申请小部分私有空间，默认为eden区的1%。TLAB中有三个指针start（起始）、top（已耗）、end（终止），当top与end碰撞则会触发refill；refill：如end-top小于等于A.size(对象大小)，1.将原来TLAB剩余空间以“filler object”填充（int[]），保证线性。2.在eden区再申请一段TLAB用来存放A对象，如果申请失败则会触发YGC。3.如果对象大于阈值则直接进入老年代：
 jvm默认为0，任何对象都会再新生代分配。
 ## 对象分配大体过程：
